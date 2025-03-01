@@ -1,4 +1,9 @@
-<script setup></script>
+<script setup>
+import { useMovieStore } from "@/stores/movie";
+import { ref } from "vue";
+
+const movieStore = useMovieStore();
+</script>
 <template>
   <div class="home">
     <div class="featured-movi-card">
@@ -18,26 +23,27 @@
       </router-link>
     </div>
 
-    <form action="" class="search-bok">
+    <form @submit.prevent="movieStore.searchMovies" class="search-bok">
       <div class="">
-        <input type="text" placeholder="Search tha Movie" />
+        <input
+          type="text"
+          placeholder="Search tha Movie"
+          v-model="movieStore.search"
+        />
         <input type="submit" value="Search" />
       </div>
     </form>
 
     <div class="movies-list">
-      <div class="movie">
+      <div class="movie" v-for="movie in movieStore.movies" :key="movie.imdbID">
         <router-link to="/movie/tt0078346" class="movie-link">
           <div class="movi-image">
-            <img
-              src="https://m.media-amazon.com/images/M/MV5BMzFlZDJjMDAtZDYxZS00NzZhLTk2ODMtZWRlODA3Njk3ZTdmXkEyXkFqcGc@._V1_SX300.jpg"
-              alt=""
-            />
-            <div class="movi-type">Action, Adventure, Sci-Fi</div>
+            <img :src="movie.Poster" alt="" />
+            <div class="movi-type">{{ movie.Genre }}</div>
           </div>
           <div class="movi-details">
-            <p class="movie-year">1992</p>
-            <h3>Superman</h3>
+            <p class="movie-year">{{ movie.Year }}</p>
+            <h3>{{ movie.Title }}</h3>
           </div>
         </router-link>
       </div>
@@ -52,17 +58,20 @@
       display: block;
       width: 100%;
       height: 300px;
+
       object-fit: cover;
       position: relative;
       z-index: 0;
     }
+
     .movi-details {
       position: absolute;
       left: 0;
       right: 0;
       bottom: 0;
+      padding: 16px 8px;
       background-color: rgb(0, 0, 0, 0.6);
-      padding: 0;
+      padding: 16;
       z-index: 1;
       h3 {
         color: white;
@@ -78,12 +87,13 @@
     justify-content: center;
     align-items: center;
     padding: 16px;
+
     input {
       display: block;
       appearance: none;
       border: none;
-      background: none;
       outline: none;
+      background: none;
 
       &[type="text"] {
         width: 100%;
@@ -119,8 +129,8 @@
   }
   .movies-list {
     display: flex;
-    flex-wrap: nowrap;
-    margin: 0px 9px;
+    flex-wrap: wrap;
+    margin: 0px 8px;
   }
   .movie {
     max-width: 50%;
@@ -138,7 +148,7 @@
         img {
           display: block;
           width: 100%;
-          height: 275px;
+          height: 300px;
           object-fit: cover;
         }
         .movi-type {
